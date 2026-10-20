@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "title": "Material reference library",
+  "folders": [
+    "Studio",
+    "Archive",
+    "Samples"
+  ],
+  "items": [
+    {
+      "id": "m0",
+      "name": "Ivory card",
+      "folder": "Studio",
+      "kind": "paper",
+      "status": "available",
+      "quantity": 24,
+      "tags": [
+        "warm",
+        "smooth"
+      ],
+      "note": "Fictional material fixture."
+    },
+    {
+      "id": "m1",
+      "name": "Blue linen",
+      "folder": "Samples",
+      "kind": "fabric",
+      "status": "available",
+      "quantity": 8,
+      "tags": [
+        "blue",
+        "woven"
+      ],
+      "note": "Fictional material fixture."
+    },
+    {
+      "id": "m2",
+      "name": "Birch offcut",
+      "folder": "Studio",
+      "kind": "wood",
+      "status": "reserved",
+      "quantity": 4,
+      "tags": [
+        "light",
+        "grain"
+      ],
+      "note": "Fictional material fixture."
+    },
+    {
+      "id": "m3",
+      "name": "Copper strip",
+      "folder": "Samples",
+      "kind": "metal",
+      "status": "available",
+      "quantity": 12,
+      "tags": [
+        "warm",
+        "reflective"
+      ],
+      "note": "Fictional material fixture."
+    },
+    {
+      "id": "m4",
+      "name": "Graphite paper",
+      "folder": "Archive",
+      "kind": "paper",
+      "status": "archived",
+      "quantity": 3,
+      "tags": [
+        "dark"
+      ],
+      "note": "Fictional material fixture."
+    },
+    {
+      "id": "m5",
+      "name": "Ochre felt",
+      "folder": "Studio",
+      "kind": "fabric",
+      "status": "available",
+      "quantity": 10,
+      "tags": [
+        "warm",
+        "soft"
+      ],
+      "note": "Fictional material fixture."
+    },
+    {
+      "id": "m6",
+      "name": "Walnut block",
+      "folder": "Samples",
+      "kind": "wood",
+      "status": "available",
+      "quantity": 6,
+      "tags": [
+        "dark",
+        "grain"
+      ],
+      "note": "Fictional material fixture."
+    },
+    {
+      "id": "m7",
+      "name": "Aluminium sheet",
+      "folder": "Studio",
+      "kind": "metal",
+      "status": "reserved",
+      "quantity": 2,
+      "tags": [
+        "silver"
+      ],
+      "note": "Fictional material fixture."
+    }
+  ]
+}
