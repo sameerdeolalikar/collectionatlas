@@ -45,6 +45,8 @@ This is a local material reference catalogue, not customer or personal-record ma
 
 Documents have at most 150 entries; the library supports 100 documents. Request/import size is bounded to 256 KB. Undo/redo is per-tab memory, not durable history. Export drafts before closing; there is no automatic crash recovery yet. Optimistic revisions reject stale saves, but merging conflicts is future work.
 
+Material notes must be text. Omitted, null or empty-string notes use “—”; other non-text values reject the whole import or save without changing the previous document.
+
 ## Planned development
 
 [ROADMAP.md](ROADMAP.md) specifies approximately **68–102 hours** of proposed work with acceptance criteria. [QUALITY-PLAN.md](QUALITY-PLAN.md) describes representative review dimensions and transition cases. Estimates are future engineering effort, not completed hours or promised paid work. [CONTRIBUTING.md](CONTRIBUTING.md) explains contribution conventions.

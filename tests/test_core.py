@@ -35,6 +35,35 @@ class Tests(unittest.TestCase):
     def test_missing_folder_rejected(self):
         d=self.fresh();d["items"][0]["folder"]="missing"
         with self.assertRaises(ValueError):validate(d)
+    def test_non_text_notes_preserve_saved_document(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Store(Path(tmp) / "library.sqlite3")
+            first = store.save({"revision": 0, "document": self.fresh()})
+            for note in [False, True, 0, 1, [], {}, ["note"]]:
+                with self.subTest(note=note):
+                    draft = copy.deepcopy(first)
+                    draft["document"]["title"] = "Rejected draft"
+                    draft["document"]["items"][-1]["note"] = note
+                    with self.assertRaisesRegex(ValueError, "Note must be text"):
+                        store.save(draft)
+                    self.assertEqual(store.get(first["id"]), first)
+            draft = copy.deepcopy(first)
+            draft["document"]["items"][-1]["note"] = "  Revised note  "
+            saved = store.save(draft)
+            self.assertEqual(saved["revision"], 2)
+            self.assertEqual(saved["document"]["items"][-1]["note"], "Revised note")
+            self.assertEqual(store.get(first["id"]), saved)
+
+    def test_optional_notes(self):
+        for note in [None, "", "  Material reference  "]:
+            with self.subTest(note=note):
+                doc = self.fresh()
+                doc["items"][0]["note"] = note
+                expected = "Material reference" if note else "—"
+                self.assertEqual(validate(doc)["items"][0]["note"], expected)
+        doc = self.fresh()
+        del doc["items"][0]["note"]
+        self.assertEqual(validate(doc)["items"][0]["note"], "—")
     def test_duplicate_tags_after_normalization(self):
         d=self.fresh();d["items"][0]["tags"]=["Warm","warm"]
         with self.assertRaises(ValueError):validate(d)
