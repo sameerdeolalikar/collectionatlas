@@ -48,7 +48,9 @@ def validate(raw):
         note = x.get("note")
         if note is not None and not isinstance(note, str):
             raise ValueError("Note must be text.")
-        out["items"].append({"id":x["id"],"name":text(x.get("name"),"Item name"),"folder":choice(x.get("folder"),out["folders"],"collection"),"kind":choice(x.get("kind"),["paper","fabric","wood","metal"],"material"),"status":choice(x.get("status"),["available","reserved","archived"],"status"),"quantity":integer(x.get("quantity"),0,10000,"Quantity"),"tags":tags,"note":text(x.get("note") or "—","Note",1000)})
+        if note is None or (len(note) <= 1000 and not note.strip()):
+            note = "—"
+        out["items"].append({"id":x["id"],"name":text(x.get("name"),"Item name"),"folder":choice(x.get("folder"),out["folders"],"collection"),"kind":choice(x.get("kind"),["paper","fabric","wood","metal"],"material"),"status":choice(x.get("status"),["available","reserved","archived"],"status"),"quantity":integer(x.get("quantity"),0,10000,"Quantity"),"tags":tags,"note":text(note,"Note",1000)})
     return out
 
 def analyze(doc):

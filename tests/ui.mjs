@@ -80,7 +80,27 @@ try {
   await page.click("#undo");
   await ready();
   assert.equal(await page.inputValue("#tool-collection"), "all");
+  const beforeNoteEdit = await exported();
+  const noteItemName = await page.locator(".material h3").first().textContent();
+  const noteItem = beforeNoteEdit.items.find((item) => item.name === noteItemName);
+  await page.getByRole("button", { name: "Edit " + noteItemName, exact: true }).click();
+  await page.fill("#field-note", " \n\t ");
+  await apply();
+  const clearedNote = await exported();
+  assert.deepEqual(clearedNote, {
+    ...beforeNoteEdit,
+    items: beforeNoteEdit.items.map((item) =>
+      item.id === noteItem.id ? { ...item, note: "—" } : item,
+    ),
+  });
+  await page.getByRole("button", { name: "Edit " + noteItemName, exact: true }).click();
+  await page.fill("#field-note", "  Updated material reference  ");
+  await apply();
   const expected = await exported();
+  assert.equal(
+    expected.items.find((item) => item.id === noteItem.id).note,
+    "Updated material reference",
+  );
   await page.click("#save");
   await page.waitForFunction(
     () =>

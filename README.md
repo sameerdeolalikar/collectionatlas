@@ -45,7 +45,7 @@ This is a local material reference catalogue, not customer or personal-record ma
 
 Documents have at most 150 entries; the library supports 100 documents. Request/import size is bounded to 256 KB. Undo/redo is per-tab memory, not durable history. Export drafts before closing; there is no automatic crash recovery yet. Optimistic revisions reject stale saves, but merging conflicts is future work.
 
-Material notes must be text. Omitted, null or empty-string notes use “—”; other non-text values reject the whole import or save without changing the previous document.
+Material notes must be text. Omitted, null, empty-string or whitespace-only notes use “—”. Notes are limited to 1000 characters, including whitespace; other non-text values reject the whole import or save without changing the previous document.
 
 ## Planned development
 

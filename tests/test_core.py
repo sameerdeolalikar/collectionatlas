@@ -55,15 +55,23 @@ class Tests(unittest.TestCase):
             self.assertEqual(store.get(first["id"]), saved)
 
     def test_optional_notes(self):
-        for note in [None, "", "  Material reference  "]:
+        for note in [None, "", " ", "\t\r\n", "\u2003", " " * 1000, "  Material reference  "]:
             with self.subTest(note=note):
                 doc = self.fresh()
                 doc["items"][0]["note"] = note
-                expected = "Material reference" if note else "—"
+                expected = "Material reference" if note and note.strip() else "—"
                 self.assertEqual(validate(doc)["items"][0]["note"], expected)
         doc = self.fresh()
         del doc["items"][0]["note"]
         self.assertEqual(validate(doc)["items"][0]["note"], "—")
+    def test_oversized_notes_rejected(self):
+        for note in ["x" * 1001, " " * 1001]:
+            with self.subTest(note=note):
+                doc = self.fresh()
+                doc["items"][0]["note"] = note
+                with self.assertRaisesRegex(ValueError, "Note must contain"):
+                    validate(doc)
+
     def test_duplicate_tags_after_normalization(self):
         d=self.fresh();d["items"][0]["tags"]=["Warm","warm"]
         with self.assertRaises(ValueError):validate(d)
