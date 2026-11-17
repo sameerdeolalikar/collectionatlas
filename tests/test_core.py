@@ -32,6 +32,32 @@ class Tests(unittest.TestCase):
             store=Store(Path(tmp)/"library.sqlite3");first=store.save({"revision":0,"document":self.fresh()})
             with self.assertRaises(ValueError):store.save({**first,"document":{"version":2}})
             self.assertEqual(store.get(first["id"]),first)
+    def test_empty_document_id_preserves_library(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Store(Path(tmp) / "library.sqlite3")
+            first = store.save({"revision": 0, "document": self.fresh()})
+            before = store.list()
+            draft = copy.deepcopy(first)
+            draft.update(id="", revision=0)
+            draft["document"]["title"] = "Revised catalogue"
+            with self.assertRaisesRegex(ValueError, "Invalid document ID"):
+                store.save(draft)
+            self.assertEqual(store.list(), before)
+            self.assertEqual(store.get(first["id"]), first)
+            draft.update(id=first["id"], revision=first["revision"])
+            saved = store.save(draft)
+            self.assertEqual(saved["revision"], 2)
+            self.assertEqual(saved["document"]["title"], "Revised catalogue")
+            self.assertEqual(store.get(first["id"]), saved)
+            self.assertEqual(len(store.list()), 1)
+
+    def test_null_document_id_creates_document(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Store(Path(tmp) / "library.sqlite3")
+            saved = store.save({"id": None, "revision": 0, "document": self.fresh()})
+            self.assertTrue(saved["id"])
+            self.assertEqual(saved["revision"], 1)
+            self.assertEqual(store.get(saved["id"]), saved)
     def test_missing_folder_rejected(self):
         d=self.fresh();d["items"][0]["folder"]="missing"
         with self.assertRaises(ValueError):validate(d)
