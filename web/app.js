@@ -90,7 +90,7 @@ async function task(message, fn) {
     controls();
   }
 }
-async function change(next, message = "Changes applied. Save when ready.") {
+async function change(next, message = "Changes applied. Save when ready.", nextSelection = selected) {
   const checked = await api("validate", next);
   undo.push(clone(doc));
   undo = undo.slice(-50);
@@ -99,7 +99,7 @@ async function change(next, message = "Changes applied. Save when ready.") {
   analysis = checked.analysis;
   dirty = true;
   selected = new Set(
-    [...selected].filter((k) => doc[KEY].some((x) => x.id === k)),
+    [...nextSelection].filter((k) => doc[KEY].some((x) => x.id === k)),
   );
   render();
   say(message);
@@ -196,8 +196,7 @@ function editEntry(entry) {
       if (entry)
         next[KEY] = next[KEY].map((x) => (x.id === entry.id ? result : x));
       else next[KEY].push(result);
-      selected = new Set([result.id]);
-      await change(next);
+      await change(next, undefined, new Set([result.id]));
     },
   );
 }

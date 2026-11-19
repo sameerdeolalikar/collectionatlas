@@ -29,6 +29,36 @@ async function apply() {
 try {
   await page.goto(process.env.BASE_URL || "http://127.0.0.1:7434");
   await ready();
+  await page.setViewportSize({ width: 390, height: 844 });
+  const beforeRejectedEdit = await exported();
+  const cards = page.locator(".material");
+  const selectedName = await cards.nth(0).locator("h3").textContent();
+  const editedName = await cards.nth(1).locator("h3").textContent();
+  const selectedId = beforeRejectedEdit.items.find((item) => item.name === selectedName).id;
+  await cards.nth(0).getByRole("checkbox").focus();
+  await page.keyboard.press("Space");
+  await page.getByRole("button", { name: "Edit " + editedName, exact: true }).click();
+  await page.fill("#field-quantity", "-1");
+  await page.click("#apply");
+  await page.locator("#dialog-error:not([hidden])").waitFor();
+  await ready();
+  assert.match(await page.textContent("#dialog-error"), /Quantity must be an integer/);
+  await page.keyboard.press("Escape");
+  assert.deepEqual(await exported(), beforeRejectedEdit);
+  await page.getByRole("button", { name: "Archive selected", exact: true }).click();
+  await page.waitForFunction(() => document.getElementById("status").textContent === "Changes applied. Save when ready.");
+  await ready();
+  assert.deepEqual(await exported(), {
+    ...beforeRejectedEdit,
+    items: beforeRejectedEdit.items.map((item) =>
+      item.id === selectedId ? { ...item, status: "archived" } : item,
+    ),
+  });
+  await page.click("#undo");
+  await ready();
+  assert.deepEqual(await exported(), beforeRejectedEdit);
+  await page.getByRole("button", { name: "Clear selection", exact: true }).click();
+  await page.setViewportSize({ width: 1440, height: 1050 });
   await page
     .getByRole("button", { name: "Select visible page", exact: true })
     .click();
