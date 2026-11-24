@@ -8,6 +8,8 @@ This is a new local application prototype with original synthetic examples and n
 
 Material cards with original CSS swatches; collections; searchable tags and types; sorted pagination; selection retained across pages/filters; hidden-selection counts; bulk move/archive; undo/redo; JSON import/export; revisioned SQLite storage.
 
+Collection filters support every valid collection name, including `all`; “All collections” always shows materials across collections.
+
 Rejected material edits preserve the current selection as well as the document. After cancelling an invalid edit, bulk actions still apply to the originally selected materials.
 
 ## Run

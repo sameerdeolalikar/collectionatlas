@@ -12,7 +12,7 @@ let doc = null,
   redo = [],
   selected = new Set(),
   query = "",
-  filter = "all",
+  filter = "",
   pageNumber = 0,
   zoom = 1,
   month = "2026-10",
@@ -113,11 +113,11 @@ function refreshFacets() {
     KIND === "collectionatlas"
       ? doc.folders
       : [...new Set(doc.events.map((e) => e.resource))].sort();
-  if (filter !== "all" && !values.includes(filter)) filter = "all";
+  if (filter !== "" && !values.includes(filter)) filter = "";
   control.replaceChildren(
     new Option(
       KIND === "collectionatlas" ? "All collections" : "All equipment",
-      "all",
+      "",
     ),
   );
   values.forEach((value) => control.add(new Option(value, value)));
@@ -265,7 +265,7 @@ async function load(document, key = null, rev = 0) {
   redo = [];
   selected.clear();
   query = "";
-  filter = "all";
+  filter = "";
   pageNumber = 0;
   zoom = 1;
   setupTools();
@@ -425,7 +425,7 @@ function domainTools(tools) {
   tools.append(
     selectField(
       "Collection",
-      [["all", "All collections"], ...doc.folders.map((f) => [f, f])],
+      [["", "All collections"], ...doc.folders.map((f) => [f, f])],
       filter,
       (v) => {
         filter = v;
@@ -447,7 +447,7 @@ function renderWorkspace() {
   const rows = doc.items
     .filter(
       (x) =>
-        (filter === "all" || x.folder === filter) &&
+        (filter === "" || x.folder === filter) &&
         [x.name, x.kind, ...x.tags].join(" ").toLowerCase().includes(query),
     )
     .sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));

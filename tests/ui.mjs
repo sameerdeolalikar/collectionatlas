@@ -81,7 +81,7 @@ try {
   );
   await page.click("#redo");
   await ready();
-  await page.selectOption("#tool-collection", "all");
+  await page.selectOption("#tool-collection", { label: "All collections" });
   await page.fill("#search", "no such material");
   assert.equal(await page.locator(".material").count(), 0);
   await page.fill("#search", "");
@@ -109,7 +109,7 @@ try {
   await page.selectOption("#tool-collection", "New reference set");
   await page.click("#undo");
   await ready();
-  assert.equal(await page.inputValue("#tool-collection"), "all");
+  assert.equal(await page.inputValue("#tool-collection"), "");
   const beforeNoteEdit = await exported();
   const noteItemName = await page.locator(".material h3").first().textContent();
   const noteItem = beforeNoteEdit.items.find((item) => item.name === noteItemName);
@@ -190,6 +190,29 @@ try {
       "Document imported. Save to add it to the library.",
   );
   await ready();
+  const collectionFixture = JSON.parse(await readFile("examples/sample.json", "utf8"));
+  collectionFixture.folders.push("all");
+  collectionFixture.items[0].folder = "all";
+  await page.setInputFiles("#import", {
+    name: "collection-named-all.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify(collectionFixture)),
+  });
+  await page.waitForFunction(
+    () => document.getElementById("status").textContent ===
+      "Document imported. Save to add it to the library.",
+  );
+  await ready();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.selectOption("#tool-collection", { label: "all" });
+  assert.equal(await page.locator(".material").count(), 1);
+  assert.equal(await page.locator(".material h3").textContent(), collectionFixture.items[0].name);
+  await page.locator(".material input[type=checkbox]").focus();
+  await page.keyboard.press("Space");
+  await page.selectOption("#tool-collection", { label: "All collections" });
+  assert.equal(await page.locator(".material").count(), 4);
+  assert.match(await page.textContent("#selection-count"), /^1 selected · 0 hidden/);
+  assert.deepEqual(await exported(), collectionFixture);
   await page.click("#settings");
   await page.keyboard.press("Escape");
   assert.equal(await page.locator("#editor").evaluate((x) => x.open), false);
